@@ -16,5 +16,5 @@ task 'test:javascripts' => :environment do
     t.browser(:konqueror)
   end
   
-  exit testsuite.success? ? 0 : 1
+  exit testsuite.successful? ? 0 : 1
 end
