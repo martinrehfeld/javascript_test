@@ -11,12 +11,16 @@ class JavascriptTestTest < Test::Unit::TestCase
       t.mount("/test", RAILS_ROOT+'/test')
       t.mount('/test/javascript/assets', RAILS_ROOT+'/../assets')
       t.run(test)
-      t.browser(:firefox)
+      #t.browser(:firefox)
+      t.browser(:safari)
     end
   end
   
-  def test_javascript_test_runner
+  def test_should_pass_on_successful_test
     assert runner_for(:success).successful?
+  end
+  
+  def test_should_fail_on_failing_test
     assert !(runner_for(:failure).successful?)
   end
   

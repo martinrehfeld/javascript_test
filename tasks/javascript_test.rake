@@ -1,6 +1,6 @@
 desc "Run tests for JavaScripts"
 task 'test:javascripts' => :environment do
-  JavaScriptTest::Runner.new do |t| 
+  testsuite = JavaScriptTest::Runner.new do |t| 
     
     t.mount("/", RAILS_ROOT)
     t.mount("/test", RAILS_ROOT+'/test')
@@ -15,4 +15,6 @@ task 'test:javascripts' => :environment do
     t.browser(:ie)
     t.browser(:konqueror)
   end
+  
+  exit testsuite.success? ? 0 : 1
 end

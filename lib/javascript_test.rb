@@ -153,7 +153,7 @@ class JavaScriptTest
   
       @server = WEBrick::HTTPServer.new(:Port => 4711) # TODO: make port configurable
       @server.mount_proc("/results") do |req, res|
-        @queue.push(req.query['result'])
+        @queue.push("Assertions:#{req.query['assertions']}, Failures:#{req.query['failures']}, Errors:#{req.query['errors']}")
         res.body = "OK"
       end
       yield self if block_given?
@@ -169,6 +169,7 @@ class JavaScriptTest
       trap("INT") { @server.shutdown }
       t = Thread.new { @server.start }
       
+      tests_ok = []
       # run all combinations of browsers and tests
       @browsers.each do |browser|
         if browser.supported?
@@ -177,7 +178,8 @@ class JavaScriptTest
             browser.visit("http://localhost:4711#{test}?resultsURL=http://localhost:4711/results&t=" + ("%.6f" % Time.now.to_f))
             result = @queue.pop
             puts "#{test} on #{browser}: #{result}"
-            @result = false unless result == 'SUCCESS'
+            @result = false unless result =~ /Failures:0, Errors:0/
+            
           end
           browser.teardown
         else
