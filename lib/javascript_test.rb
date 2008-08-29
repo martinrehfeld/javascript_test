@@ -39,9 +39,10 @@ class JavaScriptTest
     end
   
     def visit(url)
-      applescript('tell application "Firefox" to Get URL "' + url + '"') if macos? 
+      # firefox would not respond to applescript in my environment -> fall back to "system"
+      #applescript('tell application "Firefox" to Get URL "' + url + '"') if macos? 
       system("#{@path} #{url}") if windows? 
-      system("firefox #{url}") if linux?
+      system("firefox #{url}") if linux? || macos?
     end
   
     def to_s
