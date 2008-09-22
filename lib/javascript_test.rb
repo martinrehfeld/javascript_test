@@ -39,10 +39,9 @@ class JavaScriptTest
     end
   
     def visit(url)
-      # firefox would not respond to applescript in my environment -> fall back to "system"
-      #applescript('tell application "Firefox" to Get URL "' + url + '"') if macos? 
+      system("open -a Firefox '#{url}'") if macos?
       system("#{@path} #{url}") if windows? 
-      system("firefox #{url}") if linux? || macos?
+      system("firefox #{url}") if linux?
     end
   
     def to_s
@@ -73,30 +72,25 @@ class JavaScriptTest
   end
   
   class IEBrowser < Browser
-    def initialize(path='C:\Program Files\Internet Explorer\IEXPLORE.EXE')
-      @path = path
-    end
-    
     def setup
-      if windows?
-        puts %{
-          MAJOR ANNOYANCE on Windows.
-          You have to shut down the Internet Explorer manually after each test
-          for the script to proceed.
-          Any suggestions on fixing this is GREATLY appreaciated!
-          Thank you for your understanding.
-        }
-      end
+      require 'win32ole' if windows?
     end
-  
+
     def supported?
       windows?
     end
-    
+
     def visit(url)
-      system("#{@path} #{url}") if windows? 
+      if windows?
+        ie = WIN32OLE.new('InternetExplorer.Application')
+        ie.visible = true
+        ie.Navigate(url)
+        while ie.ReadyState != 4 do
+          sleep(1)
+        end
+      end
     end
-  
+
     def to_s
       "Internet Explorer"
     end
