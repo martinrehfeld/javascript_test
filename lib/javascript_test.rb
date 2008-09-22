@@ -110,6 +110,20 @@ class JavaScriptTest
     end
   end
   
+  class HtmlUnitBrowser < Browser
+    def supported?
+      true
+    end
+    
+    def visit(url)
+      system("java -jar '#{File.join(File.dirname(__FILE__),'HtmlUnitTestrunner.jar')}' '#{url}'")
+    end
+    
+    def to_s
+      "HTMLUnit"
+    end
+  end
+  
   # shut up, webrick :-)
   class ::WEBrick::HTTPServer
     def access_log(config, req, res)
@@ -212,6 +226,8 @@ class JavaScriptTest
             IEBrowser.new
           when :konqueror
             KonquerorBrowser.new
+          when :htmlunit
+            HtmlUnitBrowser.new
           else
             browser
         end

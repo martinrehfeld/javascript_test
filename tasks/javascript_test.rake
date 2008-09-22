@@ -9,11 +9,14 @@ task 'test:javascripts' => :environment do
     Dir.glob('test/javascript/*_test.html').each do |js|
       t.run(File.basename(js,'.html').gsub(/_test/,''))
     end
-    
-    t.browser(:safari)
-    t.browser(:firefox)
-    t.browser(:ie)
-    t.browser(:konqueror)
+
+    unless ENV['HEADLESS']
+      t.browser(:safari)
+      t.browser(:firefox)
+      t.browser(:ie)
+      t.browser(:konqueror)
+    end
+    t.browser(:htmlunit)
   end
   
   exit testsuite.successful? ? 0 : 1
